@@ -50,6 +50,11 @@ model User {
   sessions      Session[]
  
   @@map("users")
+  posts    Post[]
+  // Relation avec les commentaires créés par cet utilisateur
+  comments Comment[]
+  // Relation avec les likes émis par cet utilisateur
+  likes    Like[]
 }
  
 model VerificationToken {
@@ -70,9 +75,9 @@ model Post {
   caption   String
   dateTime  DateTime @default(now())
   comments  Comment[]
-  image     Image?
+  images    Image[]
   likes     Like[]
-  // Champ calculé pour compter les likes
+  // Champ pour stocker le nombre de likes
   likeCount Int @default(0)
 }
 
@@ -83,11 +88,12 @@ model Comment {
   authorId  String
   post      Post     @relation(fields: [postId], references: [id])
   postId    String
-  image     Image?
+  images    Image[]
   likes     Like[]
-  // Champ calculé pour compter les likes
+  // Champ pour stocker le nombre de likes
   likeCount Int @default(0)
 }
+
 
 model Like {
   id         String  @id @default(cuid())
@@ -98,4 +104,13 @@ model Like {
   comment    Comment? @relation(fields: [commentId], references: [id])
   commentId  String?
   liked      Boolean
+}
+
+model Image {
+  id       String    @id @default(cuid())
+  url      String
+  // Relation avec les posts qui utilisent cette image
+  posts    Post[]    @relation
+  // Relation avec les commentaires qui utilisent cette image
+  comments Comment[] @relation
 }
