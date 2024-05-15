@@ -18,9 +18,24 @@ export const authConfig = {
       clientSecret: githubSecret,
     }),
   ],
-  pages: {
-    signIn: "/auth/signIn",
+  callbacks: {
+    async jwt({ token, account }) {
+      if (account) {
+        token.accessToken = token.access_token;
+      }
+      return token;
+    },
+    async session({ session, token, user }) {
+      if (user) {
+        session.user.id = user.id;
+        token;
+        user;
+      }
+
+      return session;
+    },
   },
+
   adapter: PrismaAdapter(prisma) as Adapter,
 } satisfies NextAuthOptions;
 
