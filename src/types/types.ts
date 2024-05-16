@@ -1,27 +1,27 @@
-export interface Post {
+export interface PostType {
   id: string;
   authorId: string;
   title: string;
   caption: string;
   dateTime: Date;
   comments: Comment[];
-  imageUrls: string[] | null;
-  likes: Like[];
+  images: ImageType[];
+  likes: LikeType[];
   likeCount: number;
 }
 
-export interface Comment {
+export interface CommentType {
   id: string;
   postId: string;
   authorId: string;
   caption: string;
   dateTime: Date;
-  imageUrls: string[] | null;
-  likes: Like[];
+  images: string[] | null;
+  likes: LikeType[];
   likeCount: number;
 }
 
-export interface Like {
+export interface LikeType {
   id: string;
   userId: string;
   postId: string | null;
@@ -29,9 +29,18 @@ export interface Like {
   liked: boolean;
 }
 
-export interface Image {
+export interface ImageType {
   id: string;
   url: string;
-  posts: Post[]; // Relation avec les posts qui utilisent cette image
+  posts: PostType[]; // Relation avec les posts qui utilisent cette image
   comments: Comment[]; // Relation avec les commentaires qui utilisent cette image
+}
+
+export interface SessionType {
+  user: {
+    name: string;
+    email: string;
+    image: string;
+    id?: string;
+  };
 }

@@ -6,46 +6,49 @@ import {
   DialogContent,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { uploadFile } from "../upload/upload.action";
+import { SessionType } from "@/src/types/types";
 
-export default function FormPost({ session }) {
+interface FormPostProps {
+  session: SessionType; // Annoter explicitement le type de session avec SessionType
+}
+
+export default function FormPost({ session }:FormPostProps) {
   const [title, setTitle] = useState("");
   const [caption, setCaption] = useState("");
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState(null); // Utilisez null pour stocker l'image
+  const [imageUrl, setImageUrl] = useState("");
   const router = useRouter();
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log(session?.user.id);
-    try {
-      // Effectuer des opérations asynchrones si nécessaire
-      console.log("Title:", title);
-      console.log("Caption:", caption);
-      console.log("ok");
+    const formData = new FormData(e.currentTarget);
+    const file = formData.get("file") as File;
 
-      const Post = {
-        authorId: session?.user.id,
-        title: title,
-        caption: caption,
-      };
-      fetch("http://localhost:3000/api/posts/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // 'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: JSON.stringify(Post),
-      });
-      router.refresh();
-      setTitle("");
-      setCaption("");
-    } catch (error) {
-      console.error(
-        "Une erreur s'est produite lors de la soumission du formulaire:",
-        error
-      );
-    }
+    console.log(session.user.id);
+
+    const url = await uploadFile(formData);
+    setImageUrl(url);
+    console.log(url);
+
+    const Post = {
+      title: title,
+      caption: caption,
+      images: url.toString(),
+      authorId: session.user.id,
+    };
+
+    await fetch("http://localhost:3000/api/posts/create", {
+      method: "POST",
+      body: JSON.stringify(Post),
+      headers: {
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
   }
 
   return (
@@ -71,7 +74,9 @@ export default function FormPost({ session }) {
               type="text"
             />
             <label htmlFor="image">Images</label>
-            <input id="image" type="file" />
+            <input id="image" type="file" name="file" />
+
+            {imageUrl && <Image src={imageUrl} alt="Selected image" />}
 
             <DialogClose asChild>
               <Button type="submit">Envoyer</Button>

@@ -1,11 +1,13 @@
 import LoggoutButton from "@/src/auth/LoggoutButton";
 import { getAuthSession } from "@/src/lib/auth";
-import { Post } from "@/src/types/types";
+import { PostType, SessionType } from "@/src/types/types";
 import { redirect } from "next/navigation";
 import FormPost from "./components/FormPost";
+import Post from "./components/Post";
 
-export default async function page(props) {
-  const session = await getAuthSession();
+export default async function page() {
+  const session = (await getAuthSession()) as SessionType;
+
   const data = await getData();
   if (!session) {
     redirect("/auth/signIn");
@@ -14,6 +16,7 @@ export default async function page(props) {
   if (session) {
     console.log("non");
   }
+  console.log(session);
   return (
     <div>
       <div>Bienvenue vous êtes connecter</div>
@@ -26,15 +29,21 @@ export default async function page(props) {
       ) : null}
       <LoggoutButton />
       <FormPost session={session} />
-      {data.map((post: Post) => (
-        <div key={post.id}>{post.title}</div>
+      {data.map((post: PostType) => (
+        <Post
+          key={post.id}
+          id={post.id}
+          title={post.title}
+          image={post.images}
+          caption={post.caption}
+        />
       ))}
     </div>
   );
 }
 
 async function getData() {
-  const data = await fetch("http://localhost:3000/api/posts/find");
+  const data = await fetch("http://localhost:3000/api/posts/findList");
   // The return value is *not* serialized
   // You can return Date, Map, Set, etc.
 

@@ -6,8 +6,12 @@ export default async function create(
   res: NextApiResponse
 ) {
   if (req.method === "GET") {
-    // Créez une nouvelle entrée dans la table Post en utilisant les données de req.body
-    const data = await prisma.post.findMany();
+    // Récupérer tous les posts avec les informations sur les images associées
+    const data = await prisma.post.findMany({
+      include: {
+        images: true,
+      },
+    });
     res.json(data);
   }
 }
