@@ -13,19 +13,32 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ImageType } from "@/src/types/types";
+import { ImageType, LikeType } from "@/src/types/types";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import Like from "./Like";
 
 interface PostProps {
   title: string;
   caption: string;
   id: string;
-  image: ImageType[]; // Ajoutez une annotation de type pour l'objet image
+  image: ImageType[];
+  likeCount: number;
+  likes: LikeType[]; // Ajoutez une annotation de type pour l'objet image
 }
 
-export default function Post({ title, caption, image, id }: PostProps) {
+export default function Post({
+  title,
+  caption,
+  image,
+  id,
+  likeCount,
+  session,
+  likes,
+}: PostProps) {
   console.log("Image:", image);
+  const router = useRouter();
 
   async function handleDelete() {
     console.log("click");
@@ -37,6 +50,8 @@ export default function Post({ title, caption, image, id }: PostProps) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ postId: id }),
+    }).then(() => {
+      router.refresh();
     });
   }
   return (
@@ -64,6 +79,10 @@ export default function Post({ title, caption, image, id }: PostProps) {
         ) : (
           <p></p>
         )}
+        <div>
+          <Like likes={likes} id={id} session={session} />{" "}
+          <p>{likeCount > 0 ? likeCount : 0}</p>
+        </div>
       </CardContent>
       <Link href={`/post/${id}`}>Voir le post</Link>
     </Card>

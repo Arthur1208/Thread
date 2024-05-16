@@ -10,6 +10,7 @@ export default async function create(
     const data = await prisma.post.findMany({
       include: {
         images: true,
+        likes: true,
       },
     });
     res.json(data);

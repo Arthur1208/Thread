@@ -6,17 +6,17 @@ import {
   DialogContent,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { SessionType } from "@/src/types/types";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { uploadFile } from "../upload/upload.action";
-import { SessionType } from "@/src/types/types";
 
 interface FormPostProps {
   session: SessionType; // Annoter explicitement le type de session avec SessionType
 }
 
-export default function FormPost({ session }:FormPostProps) {
+export default function FormPost({ session }: FormPostProps) {
   const [title, setTitle] = useState("");
   const [caption, setCaption] = useState("");
   const [image, setImage] = useState(null); // Utilisez null pour stocker l'image
@@ -29,15 +29,18 @@ export default function FormPost({ session }:FormPostProps) {
     const file = formData.get("file") as File;
 
     console.log(session.user.id);
-
-    const url = await uploadFile(formData);
-    setImageUrl(url);
-    console.log(url);
+    let i = 0;
+    let url = "";
+    if (file.name !== "") {
+      url = await uploadFile(formData);
+      console.log(url);
+      setImageUrl(url);
+    }
 
     const Post = {
       title: title,
       caption: caption,
-      images: url.toString(),
+      images: file ? url.toString() : undefined,
       authorId: session.user.id,
     };
 
@@ -48,6 +51,11 @@ export default function FormPost({ session }:FormPostProps) {
         "Content-Type": "application/json",
         // 'Content-Type': 'application/x-www-form-urlencoded',
       },
+    }).then(() => {
+      setTitle("");
+      setCaption("");
+      setImageUrl("");
+      router.refresh();
     });
   }
 

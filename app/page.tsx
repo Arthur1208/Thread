@@ -9,6 +9,7 @@ export default async function page() {
   const session = (await getAuthSession()) as SessionType;
 
   const data = await getData();
+  console.log(data);
   if (!session) {
     redirect("/auth/signIn");
     console.log("test");
@@ -36,6 +37,10 @@ export default async function page() {
           title={post.title}
           image={post.images}
           caption={post.caption}
+          likeCount={post.likeCount}
+          likes={post.likes}
+          session={session}
+          
         />
       ))}
     </div>

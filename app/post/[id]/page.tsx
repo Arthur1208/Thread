@@ -18,6 +18,7 @@ export default async function Page({ params }: { params: { id: string } }) {
         caption={post.caption}
         id={post.id}
         image={post.images}
+        likeCount={post.likeCount}
       />
     </div>
   );
