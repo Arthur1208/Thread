@@ -4,8 +4,7 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { LikeType } from "@/src/types/types";
-import { Session } from "@prisma/client";
+import { LikeType, SessionType } from "@/src/types/types";
 import Like from "./Like";
 
 interface CommentProps {
@@ -15,7 +14,7 @@ interface CommentProps {
   authorId: string;
   comment: string;
   id: string;
-  session: Session; // Ajoutez une annotation de type pour l'objet image
+  session: SessionType; // Ajoutez une annotation de type pour l'objet image
 }
 
 export default function Comment({

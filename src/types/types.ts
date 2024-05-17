@@ -4,7 +4,7 @@ export interface PostType {
   title: string;
   caption: string;
   dateTime: Date;
-  comments: Comment[];
+  comments: CommentType[];
   images: ImageType[];
   likes: LikeType[];
   likeCount: number;

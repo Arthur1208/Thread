@@ -13,8 +13,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { CommentType, ImageType, LikeType } from "@/src/types/types";
-import { Session } from "@prisma/client";
+import {
+  CommentType,
+  ImageType,
+  LikeType,
+  SessionType,
+} from "@/src/types/types";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -29,7 +33,7 @@ interface PostProps {
   image: ImageType[];
   likeCount: number;
   likes: LikeType[];
-  session: Session;
+  session: SessionType;
   comments: CommentType[];
   authorId: string; // Ajoutez une annotation de type pour l'objet image
 }
@@ -102,7 +106,7 @@ export default function Post({
             return (
               <Comment
                 key={id}
-                authorId={userId}
+                authorId={comment.authorId}
                 userName={session.user.name}
                 comment={comment.caption}
                 likeCount={comment.likeCount}
