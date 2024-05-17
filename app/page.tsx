@@ -39,8 +39,9 @@ export default async function page() {
           caption={post.caption}
           likeCount={post.likeCount}
           likes={post.likes}
+          comments={post.comments}
           session={session}
-          
+          authorId={post.authorId}
         />
       ))}
     </div>

@@ -16,13 +16,13 @@ export default async function upadtePost(
 
         const like = await prisma.like.create({
           data: {
-            postId: postId,
+            commentId: postId,
             userId: userId,
             liked: true,
           },
         });
 
-        const updatePost = await prisma.post.update({
+        const updateComment = await prisma.comment.update({
           where: {
             id: postId,
           },
@@ -33,7 +33,7 @@ export default async function upadtePost(
 
         res
           .status(200)
-          .json({ message: "Post deleted successfully", updatePost });
+          .json({ message: "Post deleted successfully", updateComment });
       } catch (error) {
         console.error("Error deleting post:", error);
         res.status(500).json({ error: "Error deleting post" });
@@ -48,7 +48,7 @@ export default async function upadtePost(
 
         const like = await prisma.like.findFirst({
           where: {
-            postId: postId,
+            commentId: postId,
             userId: userId,
           },
         });
@@ -58,7 +58,7 @@ export default async function upadtePost(
           },
         });
 
-        const updatePost = await prisma.post.update({
+        const updateComment = await prisma.comment.update({
           where: {
             id: postId,
           },
@@ -69,7 +69,7 @@ export default async function upadtePost(
 
         res
           .status(200)
-          .json({ message: "Post deleted successfully", updatePost });
+          .json({ message: "Post deleted successfully", upadtePost });
       } catch (error) {
         console.error("Error deleting post:", error);
         res.status(500).json({ error: "Error deleting post" });

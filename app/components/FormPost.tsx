@@ -29,7 +29,6 @@ export default function FormPost({ session }: FormPostProps) {
     const file = formData.get("file") as File;
 
     console.log(session.user.id);
-    let i = 0;
     let url = "";
     if (file.name !== "") {
       url = await uploadFile(formData);

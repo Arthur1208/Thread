@@ -1,7 +1,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function Like({ id, session, likes }) {
+export default function Like({ id, session, likes, type }) {
   const router = useRouter();
   const [isliked, setIsliked] = useState(() => {
     const userLiked = likes.find((like) => like.userId === session.user.id);
@@ -13,7 +13,7 @@ export default function Like({ id, session, likes }) {
 
     try {
       if (!isliked) {
-        await fetch("http://localhost:3000/api/posts/updateLike", {
+        await fetch(`http://localhost:3000/api/${type}/updateLike`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -27,7 +27,7 @@ export default function Like({ id, session, likes }) {
           router.refresh();
         });
       } else if (isliked) {
-        await fetch("http://localhost:3000/api/posts/updateLike", {
+        await fetch(`http://localhost:3000/api/${type}/updateLike`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -49,8 +49,6 @@ export default function Like({ id, session, likes }) {
 
   return (
     <div>
-      {session.user.id}
-      <div>ce like est : </div>
       <svg onClick={() => handleLike()} width="20" height="20">
         <title>Je n’aime plus</title>
         <path

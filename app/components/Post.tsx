@@ -13,10 +13,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ImageType, LikeType } from "@/src/types/types";
+import { CommentType, ImageType, LikeType } from "@/src/types/types";
+import { Session } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Comment from "./Comment";
+import FormComment from "./FormComment";
 import Like from "./Like";
 
 interface PostProps {
@@ -25,7 +28,10 @@ interface PostProps {
   id: string;
   image: ImageType[];
   likeCount: number;
-  likes: LikeType[]; // Ajoutez une annotation de type pour l'objet image
+  likes: LikeType[];
+  session: Session;
+  comments: CommentType[];
+  authorId: string; // Ajoutez une annotation de type pour l'objet image
 }
 
 export default function Post({
@@ -36,9 +42,12 @@ export default function Post({
   likeCount,
   session,
   likes,
+  comments,
+  authorId,
 }: PostProps) {
   console.log("Image:", image);
   const router = useRouter();
+  const userId = session.user.id;
 
   async function handleDelete() {
     console.log("click");
@@ -58,18 +67,21 @@ export default function Post({
     <Card>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
-        <DropdownMenu>
-          <div className=" flex">
-            <Button asChild>
-              <DropdownMenuTrigger>Option</DropdownMenuTrigger>
-            </Button>
-          </div>
-          <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => handleDelete()}>
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {authorId === userId && (
+          <DropdownMenu>
+            <div className=" flex">
+              <Button asChild>
+                <DropdownMenuTrigger>Option</DropdownMenuTrigger>
+              </Button>
+            </div>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={() => handleDelete()}>
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+
         <CardDescription>{caption}</CardDescription>
       </CardHeader>
 
@@ -80,9 +92,28 @@ export default function Post({
           <p></p>
         )}
         <div>
-          <Like likes={likes} id={id} session={session} />{" "}
+          <Like likes={likes} id={id} session={session} type="posts" />{" "}
           <p>{likeCount > 0 ? likeCount : 0}</p>
         </div>
+        <FormComment postId={id} userId={userId} />
+        <h4>Commentaires :</h4>
+        {comments.map((comment) => {
+          if (comment.postId === id) {
+            return (
+              <Comment
+                key={id}
+                authorId={userId}
+                userName={session.user.name}
+                comment={comment.caption}
+                likeCount={comment.likeCount}
+                likes={comment.likes}
+                id={comment.id}
+                session={session}
+              />
+            );
+          }
+          return null; // Renvoie null si le commentaire n'appartient pas au post
+        })}
       </CardContent>
       <Link href={`/post/${id}`}>Voir le post</Link>
     </Card>

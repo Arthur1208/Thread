@@ -11,6 +11,11 @@ export default async function create(
       include: {
         images: true,
         likes: true,
+        comments: {
+          include: {
+            likes: true, // Inclure les likes des commentaires
+          },
+        },
       },
     });
     res.json(data);
