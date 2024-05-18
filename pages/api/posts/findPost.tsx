@@ -9,11 +9,18 @@ export default async function create(
   if (req.method === "GET") {
     // Récupérer tous les posts avec les informations sur les images associées
     const data = await prisma.post.findUnique({
-      include: {
-        images: true,
-      },
       where: {
         id: id,
+      },
+      include: {
+        images: true,
+        likes: true,
+        comments: {
+          include: {
+            likes: true, // Inclure les likes des commentaires
+            images: true,
+          },
+        },
       },
     });
     res.json(data);

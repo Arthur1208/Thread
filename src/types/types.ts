@@ -1,7 +1,6 @@
 export interface PostType {
   id: string;
   authorId: string;
-  title: string;
   caption: string;
   dateTime: Date;
   comments: CommentType[];
@@ -16,7 +15,7 @@ export interface CommentType {
   authorId: string;
   caption: string;
   dateTime: Date;
-  images: string[] | null;
+  images: ImageType[];
   likes: LikeType[];
   likeCount: number;
 }

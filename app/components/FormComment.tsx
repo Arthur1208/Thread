@@ -1,20 +1,27 @@
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { uploadFile } from "../upload/upload.action";
 
-export default function FormComment({ postId, userId }) {
+type FormCommentProps = {
+  postId: string;
+  userId: string | undefined;
+};
+
+export default function FormComment({ postId, userId }: FormCommentProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [comment, setComment] = useState("");
   const router = useRouter();
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    const formData = new FormData(e.currentTarget);
+    const formDataComment = new FormData(e.currentTarget);
 
-    const file = formData.get("file") as File;
+    const file = formDataComment.get("file") as File;
 
     let url = "";
     if (file.name !== "") {
-      url = await uploadFile(formData);
+      url = await uploadFile(formDataComment);
       console.log("url :" + url);
     }
 
@@ -27,10 +34,14 @@ export default function FormComment({ postId, userId }) {
         postId: postId,
         userId: userId,
         comment: comment,
+        images: url !== "" ? url : undefined,
       }),
     }).then(() => {
       setComment("");
       console.log("OOOOOOOOOK");
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
       router.refresh();
     });
   }
@@ -43,7 +54,7 @@ export default function FormComment({ postId, userId }) {
           className=" border-slate-400 border-solid border"
           type="text"
         />
-        <input id="image" type="file" name="file" />
+        <input id="image" type="file" name="file" ref={fileInputRef} />
         <button>ok</button>
       </form>
     </div>

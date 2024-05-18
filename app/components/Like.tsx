@@ -3,6 +3,7 @@ import { useState } from "react";
 
 export default function Like({ id, session, likes, type }) {
   const router = useRouter();
+
   const [isliked, setIsliked] = useState(() => {
     const userLiked = likes.find((like) => like.userId === session.user.id);
     return userLiked ? userLiked.liked : false;

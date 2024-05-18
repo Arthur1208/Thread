@@ -7,18 +7,47 @@ export default async function create(
 ) {
   if (req.method === "POST") {
     try {
-      const postId = req.body.postId;
-      const userId = req.body.userId;
+      type CommentDataType = {
+        authorId: string;
+        postId: string;
+        caption: string;
+        images?: { connect: { id: string } };
+      };
 
-      const comment = await prisma.comment.create({
-        data: {
-          authorId: userId,
-          postId: postId,
-          caption: req.body.comment,
-        },
+      const { postId, userId, images: url, comment } = req.body;
+
+      let commentData: CommentDataType = {
+        authorId: userId,
+        postId: postId,
+        caption: comment,
+      };
+
+      if (url) {
+        const image = await prisma.image.findFirst({
+          where: {
+            url: url,
+          },
+        });
+
+        if (image) {
+          commentData.images = {
+            connect: {
+              id: image.id,
+            },
+          };
+        }
+      }
+
+      const newComment = await prisma.comment.create({
+        data: commentData,
       });
-    } catch {
-      throw new Error("can't create comment");
+
+      res.status(200).json(newComment);
+    } catch (error) {
+      console.error("Error creating comment:", error);
+      res.status(500).json({ error: "can't create comment" });
     }
+  } else {
+    res.status(405).json({ error: "Method not allowed" });
   }
 }

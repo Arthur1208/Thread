@@ -1,8 +1,6 @@
-import LoggoutButton from "@/src/auth/LoggoutButton";
 import { getAuthSession } from "@/src/lib/auth";
 import { PostType, SessionType } from "@/src/types/types";
 import { redirect } from "next/navigation";
-import FormPost from "./components/FormPost";
 import Post from "./components/Post";
 
 export default async function page() {
@@ -12,29 +10,16 @@ export default async function page() {
   console.log(data);
   if (!session) {
     redirect("/auth/signIn");
-    console.log("test");
   }
   if (session) {
-    console.log("non");
   }
   console.log(session);
   return (
-    <div>
-      <div>Bienvenue vous êtes connecter</div>
-
-      {session ? (
-        <div>
-          <h2>{session.user?.name}</h2>
-          <i>{session.user?.email}</i>
-        </div>
-      ) : null}
-      <LoggoutButton />
-      <FormPost session={session} />
+    <div className=" w-screen flex items-center flex-col">
       {data.map((post: PostType) => (
         <Post
           key={post.id}
           id={post.id}
-          title={post.title}
           image={post.images}
           caption={post.caption}
           likeCount={post.likeCount}
@@ -42,6 +27,7 @@ export default async function page() {
           comments={post.comments}
           session={session}
           authorId={post.authorId}
+          createdAt={post.dateTime}
         />
       ))}
     </div>

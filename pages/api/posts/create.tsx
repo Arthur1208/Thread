@@ -8,12 +8,10 @@ export default async function create(
   if (req.method === "POST") {
     try {
       let postData: {
-        title: string;
         caption: string;
         authorId: string;
         images?: { connect: { id: string } };
       } = {
-        title: req.body.title,
         caption: req.body.caption,
         authorId: req.body.authorId,
       };

@@ -37,7 +37,6 @@ export default function FormPost({ session }: FormPostProps) {
     }
 
     const Post = {
-      title: title,
       caption: caption,
       images: file ? url.toString() : undefined,
       authorId: session.user.id,
@@ -66,13 +65,6 @@ export default function FormPost({ session }: FormPostProps) {
         </DialogTrigger>
         <DialogContent>
           <form onSubmit={handleSubmit} className="flex flex-col">
-            <label htmlFor="title">Title</label>
-            <input
-              onChange={(e) => setTitle(e.target.value)}
-              value={title}
-              id="title"
-              type="text"
-            />
             <label htmlFor="caption">Caption</label>
             <input
               onChange={(e) => setCaption(e.target.value)}

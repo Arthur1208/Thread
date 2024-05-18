@@ -12,6 +12,33 @@ export default async function deletePost(
         throw new Error("Post ID is required");
       }
 
+      const comments = await prisma.comment.findMany({
+        where: {
+          postId: postId,
+        },
+      });
+      const commentIds = comments.map((comment) => comment.id);
+
+      await prisma.like.deleteMany({
+        where: {
+          OR: [
+            {
+              postId: postId,
+            },
+            {
+              commentId: {
+                in: commentIds,
+              },
+            },
+          ],
+        },
+      });
+      await prisma.comment.deleteMany({
+        where: {
+          postId: postId,
+        },
+      });
+
       const deletedPost = await prisma.post.delete({
         where: {
           id: postId,

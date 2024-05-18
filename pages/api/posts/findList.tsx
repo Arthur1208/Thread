@@ -14,8 +14,12 @@ export default async function create(
         comments: {
           include: {
             likes: true, // Inclure les likes des commentaires
+            images: true,
           },
         },
+      },
+      orderBy: {
+        dateTime: "desc",
       },
     });
     res.json(data);
