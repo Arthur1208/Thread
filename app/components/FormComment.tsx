@@ -1,17 +1,42 @@
+import { Input } from "@/components/ui/input";
+import { ImageType } from "@/src/types/types";
+import { useUploadThing } from "@/utils/uploadthing";
+import { Session } from "@prisma/client";
+import { DialogClose } from "@radix-ui/react-dialog";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
-import { uploadFile } from "../upload/upload.action";
-
 type FormCommentProps = {
   postId: string;
   userId: string | undefined;
+  imagePost: ImageType[];
+  captionPost: string;
+  session: Session;
 };
-
-export default function FormComment({ postId, userId }: FormCommentProps) {
+export default function FormComment({
+  postId,
+  userId,
+  imagesPost,
+  captionPost,
+  session,
+  timeElapsed,
+}: FormCommentProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [comment, setComment] = useState("");
   const router = useRouter();
+
+  let uploadedImageUrl: string = "";
+  const { startUpload, permittedFileInfo } = useUploadThing("imageUploader", {
+    onClientUploadComplete: (res) => {
+      const url = res[0].url;
+      uploadedImageUrl = url;
+    },
+
+    onUploadError: () => {},
+    onUploadBegin: () => {},
+  });
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
@@ -19,10 +44,9 @@ export default function FormComment({ postId, userId }: FormCommentProps) {
 
     const file = formDataComment.get("file") as File;
 
-    let url = "";
     if (file.name !== "") {
-      url = await uploadFile(formDataComment);
-      console.log("url :" + url);
+      await startUpload([file]);
+      console.log("uploadedImageUrl = " + uploadedImageUrl);
     }
 
     await fetch("http://localhost:3000/api/comments/create", {
@@ -34,7 +58,7 @@ export default function FormComment({ postId, userId }: FormCommentProps) {
         postId: postId,
         userId: userId,
         comment: comment,
-        images: url !== "" ? url : undefined,
+        images: file.name !== "" ? uploadedImageUrl : undefined,
       }),
     }).then(() => {
       setComment("");
@@ -47,16 +71,43 @@ export default function FormComment({ postId, userId }: FormCommentProps) {
   }
   return (
     <div>
-      <form onSubmit={handleSubmit} action="">
-        <input
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          className=" border-slate-400 border-solid border"
-          type="text"
-        />
-        <input id="image" type="file" name="file" ref={fileInputRef} />
-        <button>ok</button>
-      </form>
+      <div className="grid grid-cols-[50px,1fr]">
+        <div className="flex flex-row justify-center">
+          <div className="flex justify-center">
+            <Image
+              className="object-cover rounded-full w-[36px] h-[36px]"
+              width={36}
+              height={36}
+              src={session.user.image}
+              alt=""
+            ></Image>
+          </div>
+        </div>
+        <div>
+          <div className="flex justify-between">
+            {" "}
+            <div>
+              <span className="font-semibold text-[15px]">
+                {session.user.name}
+              </span>
+              <span className=" text-slate-500 font-light text-[15px]"> </span>
+            </div>
+          </div>
+          <form className="col-start-2" onSubmit={handleSubmit} action="">
+            <textarea
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              className=" border-none text-[15px] w-full font-light active:border-none focus:border-none focus:outline-none active:outline-none"
+              placeholder="Répondre à ..."
+            />
+            <Input id="image" type="file" name="file" ref={fileInputRef} />
+
+            <button>
+              <DialogClose>Button</DialogClose>
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }

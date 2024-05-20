@@ -17,6 +17,11 @@ export default async function create(
       };
 
       if (req.body.images) {
+        await prisma.image.create({
+          data: {
+            url: req.body.images,
+          },
+        });
         // Trouver l'image dans la base de données
         const image = await prisma.image.findFirst({
           where: {

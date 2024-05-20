@@ -7,21 +7,29 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { SessionType } from "@/src/types/types";
+import { useUploadThing } from "@/utils/uploadthing";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { uploadFile } from "../upload/upload.action";
-
 interface FormPostProps {
   session: SessionType; // Annoter explicitement le type de session avec SessionType
 }
-
 export default function FormPost({ session }: FormPostProps) {
   const [title, setTitle] = useState("");
   const [caption, setCaption] = useState("");
   const [image, setImage] = useState(null); // Utilisez null pour stocker l'image
   const [imageUrl, setImageUrl] = useState("");
   const router = useRouter();
+  let uploadedImageUrl: string = "";
+  const { startUpload, permittedFileInfo } = useUploadThing("imageUploader", {
+    onClientUploadComplete: (res) => {
+      const url = res[0].url;
+      uploadedImageUrl = url;
+    },
+
+    onUploadError: () => {},
+    onUploadBegin: () => {},
+  });
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -29,16 +37,21 @@ export default function FormPost({ session }: FormPostProps) {
     const file = formData.get("file") as File;
 
     console.log(session.user.id);
-    let url = "";
+
     if (file.name !== "") {
-      url = await uploadFile(formData);
-      console.log(url);
-      setImageUrl(url);
+      await startUpload([file]);
+      console.log("uploadedImageUrl = " + uploadedImageUrl);
     }
+
+    console.log("uploadedImageUrl pas dans le if = " + uploadedImageUrl);
+    // Mise à jour de imageUrl si un fichier a été téléchargé
+    const updatedImageUrl = file ? imageUrl.toString() : "";
+
+    console.log("Updated img " + updatedImageUrl);
 
     const Post = {
       caption: caption,
-      images: file ? url.toString() : undefined,
+      images: file.name !== "" ? uploadedImageUrl : undefined,
       authorId: session.user.id,
     };
 
@@ -47,7 +60,6 @@ export default function FormPost({ session }: FormPostProps) {
       body: JSON.stringify(Post),
       headers: {
         "Content-Type": "application/json",
-        // 'Content-Type': 'application/x-www-form-urlencoded',
       },
     }).then(() => {
       setTitle("");

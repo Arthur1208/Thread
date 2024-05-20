@@ -14,6 +14,12 @@ export default async function create(
         images?: { connect: { id: string } };
       };
 
+      await prisma.image.create({
+        data: {
+          url: req.body.images,
+        },
+      });
+
       const { postId, userId, images: url, comment } = req.body;
 
       let commentData: CommentDataType = {
