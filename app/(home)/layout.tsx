@@ -1,12 +1,14 @@
 import { ThemeProvider } from "@/components/theme-provider";
+import { Button } from "@/components/ui/button";
 import LoggoutButton from "@/src/auth/LoggoutButton";
 import { getAuthSession } from "@/src/lib/auth";
 import { SessionType } from "@/src/types/types";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import FormPost from "./components/FormPost";
-import { ModeToggle } from "./components/ToggleTheme";
-import "./globals.css";
+import Link from "next/link";
+import FormPost from "../components/FormPost";
+import { ModeToggle } from "../components/ToggleTheme";
+import "../globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -20,6 +22,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = (await getAuthSession()) as SessionType;
+
   return (
     <html lang="en">
       <body className={inter.className}>
@@ -31,7 +34,21 @@ export default async function RootLayout({
         >
           <ModeToggle />
           <LoggoutButton />
+          <Button asChild>
+            <Link rel="stylesheet" href={"/"}>
+              Home
+            </Link>
+          </Button>
           <FormPost session={session} />
+
+          {session && (
+            <Button asChild>
+              <Link rel="stylesheet" href={"/user/" + session.user.id}>
+                Profile
+              </Link>
+            </Button>
+          )}
+
           {children}
         </ThemeProvider>
       </body>

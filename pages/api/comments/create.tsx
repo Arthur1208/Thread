@@ -11,24 +11,31 @@ export default async function create(
         authorId: string;
         postId: string;
         caption: string;
+        parentCommentId?: string;
         images?: { connect: { id: string } };
       };
 
-      await prisma.image.create({
-        data: {
-          url: req.body.images,
-        },
-      });
-
-      const { postId, userId, images: url, comment } = req.body;
+      const {
+        postId,
+        userId,
+        images: url,
+        comment,
+        parentCommentId,
+      } = req.body;
 
       let commentData: CommentDataType = {
         authorId: userId,
         postId: postId,
         caption: comment,
+        parentCommentId: parentCommentId || undefined,
       };
 
       if (url) {
+        await prisma.image.create({
+          data: {
+            url: req.body.images,
+          },
+        });
         const image = await prisma.image.findFirst({
           where: {
             url: url,

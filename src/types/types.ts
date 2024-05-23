@@ -7,6 +7,7 @@ export interface PostType {
   images: ImageType[];
   likes: LikeType[];
   likeCount: number;
+  author: AuthorType;
 }
 
 export interface CommentType {
@@ -42,4 +43,11 @@ export interface SessionType {
     image: string;
     id?: string;
   };
+}
+export interface AuthorType {
+  id: string;
+  name: string;
+  email: string;
+  emailVerified: string | null;
+  image: string;
 }

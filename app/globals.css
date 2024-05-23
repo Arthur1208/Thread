@@ -28,10 +28,10 @@
   }
 
   .dark {
-    --background: 224 71.4% 4.1%;
+    --background: RGB(16, 16, 16);
     --foreground: 210 20% 98%;
-    --card: 224 71.4% 4.1%;
-    --card-foreground: 210 20% 98%;
+    --card: RGB(16, 16, 16);
+    --card-foreground: RGB(16, 16, 16);
     --popover: 224 71.4% 4.1%;
     --popover-foreground: 210 20% 98%;
     --primary: 263.4 70% 50.4%;

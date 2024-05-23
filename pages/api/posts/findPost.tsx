@@ -15,10 +15,27 @@ export default async function create(
       include: {
         images: true,
         likes: true,
+        author: true,
         comments: {
           include: {
             likes: true, // Inclure les likes des commentaires
             images: true,
+            childComments: {
+              include: {
+                author: true,
+                likes: true,
+                images: true,
+                childComments: {
+                  // Inclure récursivement les enfants des enfants
+                  include: {
+                    author: true,
+                    likes: true,
+                    images: true,
+                    childComments: true, // Continuer jusqu'à la profondeur souhaitée
+                  },
+                },
+              },
+            },
           },
         },
       },

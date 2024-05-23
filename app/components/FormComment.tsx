@@ -19,6 +19,7 @@ export default function FormComment({
   imagesPost,
   captionPost,
   session,
+  CommentId,
   timeElapsed,
 }: FormCommentProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -58,6 +59,7 @@ export default function FormComment({
         postId: postId,
         userId: userId,
         comment: comment,
+        parentCommentId: CommentId ? CommentId : undefined,
         images: file.name !== "" ? uploadedImageUrl : undefined,
       }),
     }).then(() => {

@@ -78,7 +78,12 @@ model Post {
   likes     Like[]
   // Champ pour stocker le nombre de likes
   likeCount Int @default(0)
+
 }
+
+
+
+
 
 model Comment {
   id        String   @id @default(cuid())
@@ -91,6 +96,10 @@ model Comment {
   likes     Like[]
   // Champ pour stocker le nombre de likes
   likeCount Int @default(0)
+  parentComment  Comment? @relation("CommentReplies", fields: [parentCommentId], references: [id])
+  parentCommentId String?
+  childComments  Comment[] @relation("CommentReplies")
+
 }
 
 

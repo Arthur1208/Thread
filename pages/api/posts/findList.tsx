@@ -11,10 +11,18 @@ export default async function create(
       include: {
         images: true,
         likes: true,
+        author: true,
         comments: {
           include: {
             likes: true, // Inclure les likes des commentaires
             images: true,
+            childComments: {
+              include: {
+                author: true,
+                likes: true,
+                images: true,
+              },
+            },
           },
         },
       },

@@ -24,12 +24,11 @@ export default async function Page({ params }: { params: { id: string } }) {
   const session = (await getAuthSession()) as SessionType;
 
   return (
-    <div>
+    <div className=" w-screen flex items-center flex-col">
       <Link href="/">Home</Link>
       <Post
         key={post.id}
         id={post.id}
-        title={post.title}
         image={post.images}
         caption={post.caption}
         likeCount={post.likeCount}
@@ -37,6 +36,9 @@ export default async function Page({ params }: { params: { id: string } }) {
         comments={post.comments}
         session={session}
         authorId={post.authorId}
+        createdAt={post.dateTime}
+        author={post.author}
+        isPage={true}
       />
     </div>
   );
